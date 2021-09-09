@@ -30,8 +30,8 @@
             <div id="messages" class="chat__messages"></div>
             <div class="compose">
                 <form id="message-form">
-                    <input name="message" autocomplete="off" placeholder="Message" required>
-                    <button>Send</button>
+                    <input id="message-input" name="message" autocomplete="off" placeholder="Message" required>
+                    <button id="send-message">Send</button>
                 </form>
                 <button id="send-location">Send location</button>
             </div>
@@ -70,7 +70,7 @@
         </ul>
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.1/mustache.min.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.1/mustache.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.10.1/qs.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>

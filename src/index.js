@@ -4,7 +4,7 @@ const express = require('express');
 const socket = require('socket.io');
 const Filter = require('bad-words');
 const { generateMessage, generateLocationMessage } = require('./utils/messages');
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users');
+const { addUser, removeUser, getUser, getUsersInRoom, getRooms } = require('./utils/users_and_rooms');
 
 const app = express();
 const server = http.createServer(app);
@@ -16,6 +16,11 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 app.use(express.static(publicDirectoryPath));
 
 io.on('connection', socket => {
+    const rooms = getRooms();
+    if (rooms.length) {
+        socket.emit('roomList', rooms);
+    }
+
     socket.on('join', (userData, cb) => {
         const { error, user } = addUser({ id: socket.id, ...userData });
         if (error) {

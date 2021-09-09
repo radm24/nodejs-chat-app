@@ -1,17 +1,8 @@
 const socket = io();
 
 // DOM Elements
-const $messageForm = document.querySelector('#message-form');
-const $messageFormInput = $messageForm.querySelector('input');
-const $messageFormButton = $messageForm.querySelector('button');
-const $sendLocationButton = document.querySelector('#send-location');
 const $messages = document.querySelector('#messages');
-const $leaveRoom = document.querySelector('.leave-room');
-
-// Templates
-const messageTemplate = document.querySelector('#message-template').innerHTML;
-const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML;
-const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
+const $sendLocationButton = document.querySelector('#send-location');
 
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
@@ -39,16 +30,19 @@ const autoscroll = () => {
     }
 }
 
-$messageForm.addEventListener('submit', e => {
+document.querySelector('#message-form').addEventListener('submit', e => {
     e.preventDefault();
-    if ($messageFormInput.value) {
-        $messageFormButton.setAttribute('disabled', true);
+    const $messageInput = document.querySelector('#message-input');
+
+    if ($messageInput.value) {
+        const $sendMessageButton = document.querySelector('#send-message');
+        $sendMessageButton.setAttribute('disabled', true);
         
-        socket.emit('sendMessage', $messageFormInput.value, (error) => {
+        socket.emit('sendMessage', $messageInput.value, (error) => {
             console.log(error ? error : 'The message was delivered!');
-            $messageFormButton.removeAttribute('disabled');
-            $messageFormInput.value = '';
-            $messageFormInput.focus();
+            $sendMessageButton.removeAttribute('disabled');
+            $messageInput.value = '';
+            $messageInput.focus();
         });
     }
 })
@@ -70,7 +64,7 @@ $sendLocationButton.addEventListener('click', () => {
     });
 })
 
-$leaveRoom.addEventListener('click', () => {
+document.querySelector('.leave-room').addEventListener('click', () => {
     document.querySelector('#dialog-box-wrapper').classList.remove('hidden');
     document.querySelector('body').style.pointerEvents = 'none';
 })
@@ -92,6 +86,7 @@ socket.emit('join', { username, room }, (error) => {
 });
 
 socket.on('message', message => {
+    const messageTemplate = document.querySelector('#message-template').innerHTML;
     const html = Mustache.render(messageTemplate, {
         username: message.username,
         message: message.text,
@@ -102,6 +97,7 @@ socket.on('message', message => {
 })
 
 socket.on('locationMessage', message => {
+    const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML;
     const html = Mustache.render(locationMessageTemplate, {
         username: message.username,
         url: message.url,
@@ -112,6 +108,7 @@ socket.on('locationMessage', message => {
 })
 
 socket.on('roomData', ({ room, users }) => {
+    const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML;
     const html = Mustache.render(sidebarTemplate, {
         room,
         users
